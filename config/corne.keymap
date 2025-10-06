@@ -8,9 +8,8 @@
 #include <dt-bindings/led/led.h>
 
 / {
-    /* LED overlay — Replace gpios with your actual data pin for nice_nano_v2 */
     led_strip {
-        chain-length = <27>; /* total pixels (both halves) */
+        chain-length = <27>;
     };
 
     rgb_led: ws2812 {
@@ -18,7 +17,7 @@
         status = "okay";
         chain-length = <27>;
         color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
-        gpios = <&gpio0 6 0>; /* D3/TXO -> P0.06 on nice_nano_v2 (change if needed) */
+        in-gpios = <&gpio0 6 0>;
     };
 
     chosen {
