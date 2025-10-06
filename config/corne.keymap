@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2020 The ZMK Contributors
- *
- * SPDX-License-Identifier: MIT
+ * Corne keymap — corrected devicetree root + ws2812 node
  */
 
 #include <behaviors.dtsi>
@@ -9,90 +7,65 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/led/led.h>
 
-&{
+/ {
+    /* LED overlay — Replace gpios with your actual data pin for nice_nano_v2 */
     led_strip {
-        chain-length = <27>; /* 21 per-key/backlight (?) + 6 underglow — set correctly */
+        chain-length = <27>; /* total pixels (both halves) */
     };
 
     rgb_led: ws2812 {
         compatible = "worldsemi,ws2812-gpio";
         status = "okay";
-        chain-length = <27>; /* total pixels (both halves) */
+        chain-length = <27>;
         color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
-        gpios = <&gpio0 6 0>;
+        gpios = <&gpio0 6 0>; /* D3/TXO -> P0.06 on nice_nano_v2 (change if needed) */
     };
 
     chosen {
         zephyr,led-strip = &rgb_led;
     };
-};
 
+    keymap {
+        compatible = "zmk,keymap";
 
-
-/ {
-        keymap {
-                compatible = "zmk,keymap";
-
-                default_layer {
-                        display-name = "QWERTY";
-// -----------------------------------------------------------------------------------------
-// |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BSPC |
-// | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
-// | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
-//                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
-                        bindings = <
+        default_layer {
+            display-name = "QWERTY";
+            bindings = <
    &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
    &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
    &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
                   &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
-                        >;
-                };
+            >;
+        };
 
-                raise_layer {
-                        display-name = "Symbol";
-// -----------------------------------------------------------------------------------------
-// |  TAB |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BSPC |
-// | CTRL |     |     |     |     |     |   |  -  |  =  |  [  |  ]  |  \  |  `   |
-// | SHFT |     |     |     |     |     |   |  _  |  +  |  {  |  }  | "|" |  ~   |
-//                    | GUI |     | SPC |   | ENT |     | ALT |
-                        bindings = <
+        raise_layer {
+            display-name = "Symbol";
+            bindings = <
    &kp  TAB  &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp ASTRK &kp LPAR &kp RPAR &kp BSPC
    &kp LCTRL &trans   &trans &trans   &trans   &trans      &kp MINUS &kp EQUAL &kp LBKT  &kp RBKT &kp BSLH &kp GRAVE
    &kp LSHFT &trans   &trans &trans   &trans   &trans      &kp UNDER &kp PLUS  &kp LBRC  &kp RBRC &kp PIPE &kp TILDE
                              &kp LGUI &trans   &kp SPACE   &kp RET   &trans    &kp RALT
-                        >;
-                };
+            >;
         };
 
-                lower_layer {
-                        display-name = "Arrows/Nums";
-// -----------------------------------------------------------------------------------------
-// |  TAB |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BSPC |
-// |      |     |     |     |     |     |   | LFT | DWN |  UP | RGT |     |      |
-// | SHFT |     |     |     |     |     |   |     |     |     |     |     |      |
-//                    | GUI |     | SPC |   | ENT |     | ALT |
-                        bindings = <
+        lower_layer {
+            display-name = "Arrows/Nums";
+            bindings = <
    &kp TAB    &kp N1       &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
    &trans     &trans       &trans       &trans       &trans       &trans         &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
    &kp LSHFT  &trans       &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
                                         &kp LGUI     &trans       &kp SPACE      &kp RET  &trans   &kp RALT
-                        >;
-                };
+            >;
+        };
 
-                fn_layer {
-                        display-name = "Fn/Media Layer";
-// -----------------------------------------------------------------------------------------
-// |  TAB  | F1   | F2  | F3  | F4  | F5  |   | F6   |  F7  |  F8  | F9  | F10 | BSPC |
-// |RGB_TOG|BL_TOG|     |     |     |     |   | HOME | PG_UP| PG_DN| END |     |      |
-// |       |      |     |     |     |     |   |      |      |      |     |     |      |
-//                      | GUI |     | SPC |   | ENT  |      |  ALT |
-                        bindings = <
+        fn_layer {
+            display-name = "Fn/Media Layer";
+            bindings = <
    &kp TAB         &kp F1      &kp F2   &kp F3   &kp F4   &kp F5    &kp F6   &kp F7    &kp F8     &kp F9   &kp F10 &kp BSPC
-   &rgb_ug RGB_TOG &bl BL_TOG  &trans   &trans   &trans   &trans    &kp HOME &kp PG_UP &kp PG_DN  &kp END  &trans  &trans
+   &rgb_ug RGB_TOG &trans      &trans   &trans   &trans   &trans    &kp HOME &kp PG_UP &kp PG_DN  &kp END  &trans  &trans
    &trans          &trans      &trans   &trans   &trans   &trans    &trans   &trans    &trans     &trans   &trans  &trans
                                         &kp LGUI &trans   &kp SPACE &kp RET  &trans    &kp RALT
-                        >;
-                };
-
-
+            >;
+        };
+    };
 };
